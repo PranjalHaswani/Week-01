@@ -1,52 +1,65 @@
 import java.util.Scanner;
 
 public class BMICalculator {
-    // Method to calculate BMI
-    public static double calculateBMI(double weight, double height) {
-        // BMI = weight (kg) / height (m)²
-        return weight / (height * height);
+	 public static void calculateBMI(double[][] personData) {
+        for (int i = 0; i < personData.length; i++) {
+            double weight = personData[i][0]; // weight in kg
+            double heightCm = personData[i][1]; // height in cm
+            double heightM = heightCm / 100; // convert height from cm to meters
+
+            double bmi = weight / (heightM * heightM);
+            personData[i][2] = bmi;
+        }
     }
 
-    // Method to determine weight status based on BMI
-    public static String getWeightStatus(double bmi) {
-        if (bmi <= 18.4) {
-            return "Underweight";
-        } else if (bmi >= 18.5 && bmi <= 24.9) {
-            return "Normal";
-        } else if (bmi >= 25.0 && bmi <= 39.9) {
-            return "Overweight";
-        } else {
-            return "Obese";
+    // Method to determine BMI status for each person
+    public static String[] determineBMIStatus(double[][] personData) {
+        String[] status = new String[personData.length];
+
+        for (int i = 0; i < personData.length; i++) {
+            double bmi = personData[i][2];
+
+            if (bmi <= 18.4) {
+                status[i] = "Underweight";
+            } else if (bmi >= 18.5 && bmi <= 24.9) {
+                status[i] = "Normal";
+            } else if (bmi >= 25.0 && bmi <= 39.9) {
+                status[i] = "Overweight";
+            } else {
+                status[i] = "Obese";
+            }
         }
+
+        return status;
     }
 
     public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        System.out.print("Enter the number of persons: ");// Taking the number of persons as input
-        int numPersons = sc.nextInt();
+        Scanner scanner = new Scanner(System.in);
 
-        // Arrays to store weight, height, BMI, and weight status for each person
-        double[] weights = new double[numPersons];
-        double[] heights = new double[numPersons];
-        double[] bmis = new double[numPersons];
-        String[] weightStatus = new String[numPersons];
-        // Input weight and height for each person
-        for (int i = 0; i < numPersons; i++) {
-            System.out.println("\nPerson " + (i + 1) + ":");
-            System.out.print("Enter weight (in kg): "); // Input weight and height
-            weights[i] = sc.nextDouble();
+        // 2D array to store weight (kg), height (cm), and BMI (in the 3rd column)
+        double[][] personData = new double[10][3];
 
-            System.out.print("Enter height (in meters): ");
-            heights[i] = sc.nextDouble();
-            bmis[i] = calculateBMI(weights[i], heights[i]);// Calculate BMI for the person
-            weightStatus[i] = getWeightStatus(bmis[i]);     // Determine the weight status based on the BMI
+        // Taking input for weight and height
+        for (int i = 0; i < personData.length; i++) {
+            System.out.println("Enter details for person " + (i + 1) + ":");
+            System.out.print("Weight (kg): ");
+            personData[i][0] = scanner.nextDouble();
+            System.out.print("Height (cm): ");
+            personData[i][1] = scanner.nextDouble();
+            System.out.println();
         }
-        System.out.println("\nResults:"); // Display the results
-        System.out.println("Person | Weight (kg) | Height (m) | BMI | Weight Status");
-        for (int i = 0; i < numPersons; i++) {
-            System.out.printf("%d | %.2f | %.2f | %.2f | %s\n", 
-                i + 1, weights[i], heights[i], bmis[i], weightStatus[i]);
+
+        calculateBMI(personData);
+        String[] status = determineBMIStatus(personData);
+
+        // Display the results
+        System.out.println("\nBMI Calculation Results:");
+        System.out.printf("%-10s%-10s%-10s%-20s\n", "Weight (kg)", "Height (cm)", "BMI", "Status");
+
+        for (int i = 0; i < personData.length; i++) {
+            System.out.printf("%-10.2f%-10.2f%-10.2f%-20s\n", personData[i][0], personData[i][1], personData[i][2], status[i]);
         }
-        sc.close();
+
+        scanner.close();
     }
 }
